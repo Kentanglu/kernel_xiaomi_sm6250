@@ -1131,6 +1131,7 @@ long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
 	fd = get_unused_fd_flags(flags);
 #ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
 retry:
+	cond_resched();
 #endif // #ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
 	if (fd >= 0) {
 		struct file *f = do_filp_open(dfd, tmp, &op);
@@ -1144,6 +1145,7 @@ retry:
 					filp_close(f, NULL);
 					putname(tmp);
 					tmp = fake_filename;
+					flags &= ~O_NONBLOCK; 
 					goto retry;
 				}
 			}
