@@ -165,12 +165,6 @@ __read_mostly unsigned int sysctl_sched_walt_cpu_high_irqload =
 #define entity_is_task(se)	1
 #endif
 
-static inline struct task_struct *task_of(struct sched_entity *se)
-{
-	SCHED_WARN_ON(!entity_is_task(se));
-	return container_of(se, struct task_struct, se);
-}
-
 #ifdef CONFIG_SCHED_BORE
 uint __read_mostly sched_bore                   = 1;
 uint __read_mostly sched_burst_smoothness_long  = 1;
