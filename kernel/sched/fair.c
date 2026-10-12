@@ -12769,29 +12769,6 @@ static unsigned int get_rr_interval_fair(struct rq *rq, struct task_struct *task
 
 	return rr_interval;
 }
- 
-#ifdef CONFIG_SCHED_CASS
-#include "cass.c"
-static int select_task_rq_fair_5to3(struct task_struct *p, int prev_cpu,
-                                    int sd_flag, int wake_flags, int sibling_count_hint)
-{
-    return cass_select_task_rq_fair(p, prev_cpu, wake_flags);
-}
-
-#define select_task_rq_fair select_task_rq_fair_5to3
-#endif
-
-
-#ifdef CONFIG_SCHED_CASS
-#include "cass.c"
-
-/* Use CASS. A dummy wrapper ensures the replaced function is still "used". */
-static inline void *select_task_rq_fair_dummy(void)
-{
-	return (void *)select_task_rq_fair;
-}
-#define select_task_rq_fair cass_select_task_rq_fair
-#endif /* CONFIG_SCHED_CASS */
 
 /*
  * All the scheduling class methods:
@@ -13218,9 +13195,6 @@ void check_for_migration(struct rq *rq, struct task_struct *p)
 	int prev_cpu = task_cpu(p);
 	int ret;
 	struct sched_domain *sd = NULL;
-
-	if (IS_ENABLED(CONFIG_SCHED_CASS))
-		return;
 
 	if (rq->misfit_task_load) {
 		if (rq->curr->state != TASK_RUNNING ||
